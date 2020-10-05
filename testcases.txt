@@ -1,0 +1,72 @@
+*Main> evalS (Num 5)
+Just (Num 5)
+
+
+
+-- evalM Test Cases
+*Main> evalM [("x", (Num 5))] (Num 5)
+Just (Num 5)
+*Main>
+
+-- typeofM Test Cases
+*Main> typeofM [("x", TNum)] (Num 4)
+Just TNum
+*Main> typeofM [("x", TNum)] (Num True)
+
+<interactive>:2:28: error:
+    • Couldn't match expected type ‘Int’ with actual type ‘Bool’
+    • In the first argument of ‘Num’, namely ‘True’
+      In the second argument of ‘typeofM’, namely ‘(Num True)’
+      In the expression: typeofM [("x", TNum)] (Num True)
+*Main> typeofM [("x", TBool)] (Num True)
+
+<interactive>:3:29: error:
+    • Couldn't match expected type ‘Int’ with actual type ‘Bool’
+    • In the first argument of ‘Num’, namely ‘True’
+      In the second argument of ‘typeofM’, namely ‘(Num True)’
+      In the expression: typeofM [("x", TBool)] (Num True)
+*Main> typeofM [("x", TBool)] (Bool True)
+
+<interactive>:4:25: error:
+    • Data constructor not in scope: Bool :: Bool -> BBAE
+    • Perhaps you meant ‘TBool’ (line 11)
+*Main> typeofM [("x", TNum)] (Num 4)
+Just TNum
+*Main> typeofM [("x", TNum)] (Num True)
+
+<interactive>:6:28: error:
+    • Couldn't match expected type ‘Int’ with actual type ‘Bool’
+    • In the first argument of ‘Num’, namely ‘True’
+      In the second argument of ‘typeofM’, namely ‘(Num True)’
+      In the expression: typeofM [("x", TNum)] (Num True)
+*Main> typeofM [("x", TNum)] (Boolean True)
+Just TBool
+*Main> typeofM [("x", TNum)] (Boolean False)
+Just TBool
+*Main> typeofM [("x", TBool)] (Boolean False)
+Just TBool
+*Main> typeofM [("x", TBool)] (Boolean True)
+Just TBool
+*Main> typeofM [("x", TBool)] (Boolean 5)
+
+<interactive>:11:33: error:
+    • No instance for (Num Bool) arising from the literal ‘5’
+    • In the first argument of ‘Boolean’, namely ‘5’
+      In the second argument of ‘typeofM’, namely ‘(Boolean 5)’
+      In the expression: typeofM [("x", TBool)] (Boolean 5)
+*Main> typeofM [("x", TNum)] (Boolean 5)
+
+<interactive>:12:32: error:
+    • No instance for (Num Bool) arising from the literal ‘5’
+    • In the first argument of ‘Boolean’, namely ‘5’
+      In the second argument of ‘typeofM’, namely ‘(Boolean 5)’
+      In the expression: typeofM [("x", TNum)] (Boolean 5)
+*Main> typeofM [("x", TBool)] (Num 5)
+Just TNum
+*Main> typeofM [("x", TBool)] (Num True)
+
+<interactive>:14:29: error:
+    • Couldn't match expected type ‘Int’ with actual type ‘Bool’
+    • In the first argument of ‘Num’, namely ‘True’
+      In the second argument of ‘typeofM’, namely ‘(Num True)’
+      In the expression: typeofM [("x", TBool)] (Num True)
