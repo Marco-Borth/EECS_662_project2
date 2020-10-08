@@ -1,72 +1,232 @@
+-- file Name: testcases.txt
+-- file Author: Marco Borth, 2894114
+-- description: text file containing all Test cases for functions tested with Linux Terminal.
+
+-- evalS Test Cases
 *Main> evalS (Num 5)
 Just (Num 5)
+
+*Main> evalS (Boolean True)
+Just (Boolean True)
+
+*Main> evalS(Plus (Num 5) (Num 6))
+Just (Num 11)
+
+*Main> evalS (Minus (Num 5) (Num 4))
+Just (Num 1)
+*Main> evalS (Minus (Num 5) (Num 5))
+Just (Num 0)
+*Main> evalS (Minus (Num 5) (Num 6))
+Just (Num *** Exception: ERROR: Resulting Difference must be Natural
+CallStack (from HasCallStack):
+  error, called at project2.hs:53:14 in main:Main
+
+*Main> evalS (And (Boolean True) (Boolean True))
+Just (Boolean True)
+*Main> evalS (And (Boolean True) (Boolean False))
+Just (Boolean False)
+*Main> evalS (And (Boolean False) (Boolean True))
+Just (Boolean False)
+*Main> evalS (And (Boolean False) (Boolean False))
+Just (Boolean False)
+
+*Main> evalS (Leq (Num 5) (Num 6))
+Just (Boolean True)
+*Main> evalS (Leq (Num 5) (Num 5))
+Just (Boolean True)
+*Main> evalS (Leq (Num 5) (Num 4))
+Just (Boolean False)
+
+*Main> evalS (IsZero (Num 0))
+Just (Boolean True)
+*Main> evalS (IsZero (Num 5))
+Just (Boolean False)
+
+*Main> evalS (If (Boolean True) (Boolean True) (Boolean True))
+Just (Boolean True)
+*Main> evalS (If (Boolean True) (Boolean True) (Boolean False))
+Just (Boolean True)
+*Main> evalS (If (Boolean True) (Boolean False) (Boolean True))
+Just (Boolean False)
+*Main> evalS (If (Boolean True) (Boolean False) (Boolean False))
+Just (Boolean False)
+*Main> evalS (If (Boolean False) (Boolean True) (Boolean True))
+Just (Boolean True)
+*Main> evalS (If (Boolean False) (Boolean True) (Boolean False))
+Just (Boolean False)
+*Main> evalS (If (Boolean False) (Boolean False) (Boolean True))
+Just (Boolean True)
+*Main> evalS (If (Boolean False) (Boolean False) (Boolean False))
+Just (Boolean False)
 
 
 
 -- evalM Test Cases
 *Main> evalM [("x", (Num 5))] (Num 5)
 Just (Num 5)
-*Main>
+
+*Main> evalM [] (Boolean True)
+Just (Boolean True)
+
+
+
+-- testBBAE Test Cases
+*Main> testBBAE (Boolean True)
+True
+*Main> testBBAE (Boolean False)
+False
+
+*Main> testBBAE (And (Boolean True) (Boolean False))
+False
+*Main> testBBAE (And (Boolean False) (Boolean False))
+False
+*Main> testBBAE (And (Boolean False) (Boolean True))
+False
+*Main> testBBAE (And (Boolean True) (Boolean True))
+True
+
+*Main> testBBAE (Leq (Num 5) (Num 6))
+True
+*Main> testBBAE (Leq (Num 5) (Num 5))
+True
+*Main> testBBAE (Leq (Num 5) (Num 4))
+False
+
+*Main> testBBAE (IsZero (Num 0))
+True
+*Main> testBBAE (IsZero (Num 5))
+False
+
+*Main> testBBAE (If (Boolean True) (Boolean True) (Boolean True))
+True
+*Main> testBBAE (If (Boolean True) (Boolean True) (Boolean False))
+True
+*Main> testBBAE (If (Boolean True) (Boolean False) (Boolean True))
+False
+*Main> testBBAE (If (Boolean True) (Boolean False) (Boolean False))
+False
+*Main> testBBAE (If (Boolean False) (Boolean True) (Boolean True))
+True
+*Main> testBBAE (If (Boolean False) (Boolean True) (Boolean False))
+False
+*Main> testBBAE (If (Boolean False) (Boolean False) (Boolean True))
+True
+*Main> testBBAE (If (Boolean False) (Boolean False) (Boolean False))
+False
+
+
 
 -- typeofM Test Cases
-*Main> typeofM [("x", TNum)] (Num 4)
+*Main> typeofM [] (Num 4)
 Just TNum
-*Main> typeofM [("x", TNum)] (Num True)
 
-<interactive>:2:28: error:
-    • Couldn't match expected type ‘Int’ with actual type ‘Bool’
-    • In the first argument of ‘Num’, namely ‘True’
-      In the second argument of ‘typeofM’, namely ‘(Num True)’
-      In the expression: typeofM [("x", TNum)] (Num True)
-*Main> typeofM [("x", TBool)] (Num True)
+*Main> typeofM [] (Boolean True)
+Just TBool
 
-<interactive>:3:29: error:
-    • Couldn't match expected type ‘Int’ with actual type ‘Bool’
-    • In the first argument of ‘Num’, namely ‘True’
-      In the second argument of ‘typeofM’, namely ‘(Num True)’
-      In the expression: typeofM [("x", TBool)] (Num True)
-*Main> typeofM [("x", TBool)] (Bool True)
+*Main> typeofM [] (Boolean False)
+Just TBool
 
-<interactive>:4:25: error:
-    • Data constructor not in scope: Bool :: Bool -> BBAE
-    • Perhaps you meant ‘TBool’ (line 11)
-*Main> typeofM [("x", TNum)] (Num 4)
+*Main> typeofM [] (Plus (Num 5) (Num 6))
 Just TNum
-*Main> typeofM [("x", TNum)] (Num True)
 
-<interactive>:6:28: error:
-    • Couldn't match expected type ‘Int’ with actual type ‘Bool’
-    • In the first argument of ‘Num’, namely ‘True’
-      In the second argument of ‘typeofM’, namely ‘(Num True)’
-      In the expression: typeofM [("x", TNum)] (Num True)
-*Main> typeofM [("x", TNum)] (Boolean True)
-Just TBool
-*Main> typeofM [("x", TNum)] (Boolean False)
-Just TBool
-*Main> typeofM [("x", TBool)] (Boolean False)
-Just TBool
-*Main> typeofM [("x", TBool)] (Boolean True)
-Just TBool
-*Main> typeofM [("x", TBool)] (Boolean 5)
-
-<interactive>:11:33: error:
-    • No instance for (Num Bool) arising from the literal ‘5’
-    • In the first argument of ‘Boolean’, namely ‘5’
-      In the second argument of ‘typeofM’, namely ‘(Boolean 5)’
-      In the expression: typeofM [("x", TBool)] (Boolean 5)
-*Main> typeofM [("x", TNum)] (Boolean 5)
-
-<interactive>:12:32: error:
-    • No instance for (Num Bool) arising from the literal ‘5’
-    • In the first argument of ‘Boolean’, namely ‘5’
-      In the second argument of ‘typeofM’, namely ‘(Boolean 5)’
-      In the expression: typeofM [("x", TNum)] (Boolean 5)
-*Main> typeofM [("x", TBool)] (Num 5)
+*Main> typeofM [] (Minus (Num 5) (Num 6))
 Just TNum
-*Main> typeofM [("x", TBool)] (Num True)
 
-<interactive>:14:29: error:
-    • Couldn't match expected type ‘Int’ with actual type ‘Bool’
-    • In the first argument of ‘Num’, namely ‘True’
-      In the second argument of ‘typeofM’, namely ‘(Num True)’
-      In the expression: typeofM [("x", TBool)] (Num True)
+*Main> typeofM [] (And (Boolean True) (Boolean True))
+Just TBool
+*Main> typeofM [] (And (Boolean True) (Boolean False))
+Just TBool
+*Main> typeofM [] (And (Boolean False) (Boolean True))
+Just TBool
+*Main> typeofM [] (And (Boolean False) (Boolean False))
+Just TBool
+
+*Main> typeofM [] (Leq (Num 5) (Num 6))
+Just TBool
+*Main> typeofM [] (Leq (Num 5) (Num 5))
+Just TBool
+*Main> typeofM [] (Leq (Num 5) (Num 4))
+Just TBool
+
+*Main> typeofM [] (IsZero (Num 0))
+Just TNum
+*Main> typeofM [] (IsZero (Num 5))
+Just TNum
+
+*Main> typeofM [] (If (Boolean True) (Boolean True) (Boolean True))
+Just TBool
+*Main> typeofM [] (If (Boolean True) (Boolean True) (Boolean False))
+Just TBool
+*Main> typeofM [] (If (Boolean True) (Boolean False) (Boolean True))
+Just TBool
+*Main> typeofM [] (If (Boolean True) (Boolean False) (Boolean False))
+Just TBool
+*Main> typeofM [] (If (Boolean False) (Boolean True) (Boolean True))
+Just TBool
+*Main> typeofM [] (If (Boolean False) (Boolean True) (Boolean False))
+Just TBool
+*Main> typeofM [] (If (Boolean False) (Boolean False) (Boolean True))
+Just TBool
+*Main> typeofM [] (If (Boolean False) (Boolean False) (Boolean False))
+Just TBool
+
+
+
+-- evalT Test Cases
+*Main> evalT (Num 5)
+Just (Num 5)
+
+*Main> evalT (Boolean True)
+Just (Boolean True)
+
+*Main> evalT (Plus (Num 5) (Num 6))
+Just (Num 11)
+
+*Main> evalT (Minus (Num 5) (Num 4))
+Just (Num 1)
+*Main> evalT (Minus (Num 5) (Num 5))
+Just (Num 0)
+*Main> evalT (Minus (Num 5) (Num 6))
+Just (Num *** Exception: ERROR: Resulting Difference must be Natural
+CallStack (from HasCallStack):
+  error, called at project2.hs:53:14 in main:Main
+
+*Main> evalT (And (Boolean True) (Boolean True))
+Just (Boolean True)
+*Main> evalT (And (Boolean True) (Boolean False))
+Just (Boolean False)
+*Main> evalT (And (Boolean False) (Boolean False))
+Just (Boolean False)
+*Main> evalT (And (Boolean False) (Boolean True))
+Just (Boolean False)
+
+*Main> evalT (Leq (Num 5) (Num 6))
+Just (Boolean True)
+*Main> evalT (Leq (Num 5) (Num 5))
+Just (Boolean True)
+*Main> evalT (Leq (Num 5) (Num 4))
+Just (Boolean False)
+
+*Main> evalT (IsZero (Num 0))
+Just (Boolean True)
+*Main> evalT (IsZero (Num 5))
+Just (Boolean False)
+
+*Main> evalT (If (Boolean False) (Boolean False) (Boolean False))
+Just (Boolean False)
+*Main> evalT (If (Boolean True) (Boolean True) (Boolean True))
+Just (Boolean True)
+*Main> evalT (If (Boolean True) (Boolean True) (Boolean False))
+Just (Boolean True)
+*Main> evalT (If (Boolean True) (Boolean False) (Boolean True))
+Just (Boolean False)
+*Main> evalT (If (Boolean True) (Boolean False) (Boolean False))
+Just (Boolean False)
+*Main> evalT (If (Boolean False) (Boolean True) (Boolean True))
+Just (Boolean True)
+*Main> evalT (If (Boolean False) (Boolean True) (Boolean False))
+Just (Boolean False)
+*Main> evalT (If (Boolean False) (Boolean False) (Boolean True))
+Just (Boolean True)
+*Main> evalT (If (Boolean False) (Boolean False) (Boolean False))
+Just (Boolean False)
