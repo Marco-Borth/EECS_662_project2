@@ -2,12 +2,51 @@
 -- file Author: Marco Borth, 2894114
 -- description: text file containing all Test cases for functions tested with Linux Terminal.
 
+-- subst Test Cases
+*Main> subst [] (Num 4) (Num 5)
+Num 5
+
+*Main> subst [] (Num 5) (Boolean True)
+Boolean True
+*Main> subst [] (Num 5) (Boolean False)
+Boolean False
+
+*Main> subst [] (Num 4) (Plus (Num 4) (Num 5))
+Num 9
+
+*Main> subst [] (Num 4) (Minus (Num 6) (Num 5))
+Num 1
+*Main> subst [] (Num 4) (Minus (Num 6) (Num 6))
+Num 0
+*Main> subst [] (Num 4) (Minus (Num 6) (Num 7))
+Num *** Exception: ERROR: Resulting Difference must be Natural
+CallStack (from HasCallStack):
+  error, called at project2.hs:52:14 in main:Main
+
+*Main> subst [] (Num 5) (Bind [] (Num 4) (Num 7))
+Bind "" (Num 4) (Num 7)
+*Main> subst [] (Num 5) (Bind [] (Boolean True) (Num 7))
+Bind "" (Boolean True) (Num 7)
+*Main> subst [] (Num 5) (Bind [] (Num 4) (Boolean False))
+Bind "" (Num 4) (Boolean False)
+*Main> subst [] (Num 5) (Bind [] (Boolean True) (Boolean False))
+Bind "" (Boolean True) (Boolean False)
+
+*Main> subst [] (Num 5) (Id "")
+Num 5
+*Main> subst [] (Num 5) (Id "asdf")
+Id "asdf"
+
+
+
 -- evalS Test Cases
 *Main> evalS (Num 5)
 Just (Num 5)
 
 *Main> evalS (Boolean True)
 Just (Boolean True)
+*Main> evalS (Boolean False)
+Just (Boolean False)
 
 *Main> evalS(Plus (Num 5) (Num 6))
 Just (Num 11)
@@ -20,6 +59,18 @@ Just (Num 0)
 Just (Num *** Exception: ERROR: Resulting Difference must be Natural
 CallStack (from HasCallStack):
   error, called at project2.hs:53:14 in main:Main
+
+*Main> evalS (Bind [] (Num 4) (Num 7))
+Just (Num 7)
+*Main> evalS (Bind [] (Num 4) (Boolean True))
+Just (Boolean True)
+*Main> evalS (Bind [] (Boolean False) (Num 7))
+Just (Num 7)
+*Main> evalS (Bind [] (Boolean False) (Boolean True))
+Just (Boolean True)
+
+*Main> evalS (Id [])
+Nothing
 
 *Main> evalS (And (Boolean True) (Boolean True))
 Just (Boolean True)
@@ -65,16 +116,108 @@ Just (Boolean False)
 *Main> evalM [("x", (Num 5))] (Num 5)
 Just (Num 5)
 
-*Main> evalM [] (Boolean True)
+*Main> evalM [("x", (Boolean True))] (Boolean True)
 Just (Boolean True)
+*Main> evalM [("x", (Boolean False))] (Boolean False)
+Just (Boolean False)
+
+*Main> evalM [] (Plus (Num 5) (Num 6))
+Just (Num 11)
+
+*Main> evalM [] (Minus (Num 5) (Num 4))
+Just (Num 1)
+*Main> evalM [] (Minus (Num 5) (Num 5))
+Just (Num 0)
+*Main> evalM [] (Minus (Num 5) (Num 6))
+Just (Num *** Exception: ERROR: Resulting Difference must be Natural
+CallStack (from HasCallStack):
+  error, called at project2.hs:52:14 in main:Main
+
+*Main> evalM [] (Bind [] (Num 5) (Num 7))
+Just (Num 7)
+*Main> evalM [] (Bind [] (Num 5) (Boolean True))
+Just (Boolean True)
+*Main> evalM [] (Bind [] (Boolean True) (Num 7))
+Just (Num 7)
+*Main> evalM [] (Bind [] (Boolean True) (Boolean False))
+Just (Boolean False)
+
+*Main> evalM [] (Id [])
+Nothing
+
+*Main> evalM [] (And (Boolean True) (Boolean True))
+Just (Boolean True)
+*Main> evalM [] (And (Boolean True) (Boolean False))
+Just (Boolean False)
+*Main> evalM [] (And (Boolean False) (Boolean True))
+Just (Boolean False)
+*Main> evalM [] (And (Boolean False) (Boolean False))
+Just (Boolean False)
+
+*Main> evalM [] (Leq (Num 5) (Num 6))
+Just (Boolean True)
+*Main> evalM [] (Leq (Num 5) (Num 5))
+Just (Boolean True)
+*Main> evalM [] (Leq (Num 5) (Num 4))
+Just (Boolean False)
+
+*Main> evalM [] (IsZero (Num 5) )
+Just (Boolean False)
+*Main> evalM [] (IsZero (Num 0) )
+Just (Boolean True)
+
+*Main> evalM [] (If (Boolean True) (Boolean True) (Boolean True))
+Just (Boolean True)
+*Main> evalM [] (If (Boolean True) (Boolean True) (Boolean False))
+Just (Boolean True)
+*Main> evalM [] (If (Boolean True) (Boolean False) (Boolean True))
+Just (Boolean False)
+*Main> evalM [] (If (Boolean True) (Boolean False) (Boolean False))
+Just (Boolean False)
+*Main> evalM [] (If (Boolean False) (Boolean True) (Boolean True))
+Just (Boolean True)
+*Main> evalM [] (If (Boolean False) (Boolean True) (Boolean Fasle))
+*Main> evalM [] (If (Boolean False) (Boolean True) (Boolean False))
+Just (Boolean False)
+*Main> evalM [] (If (Boolean False) (Boolean False) (Boolean True))
+Just (Boolean True)
+*Main> evalM [] (If (Boolean False) (Boolean False) (Boolean False))
+Just (Boolean False)
 
 
 
 -- testBBAE Test Cases
+*Main> testBBAE (Num 5)
+True
+
 *Main> testBBAE (Boolean True)
 True
 *Main> testBBAE (Boolean False)
 False
+
+*Main> testBBAE (Plus (Num 4) (Num 5))
+True
+
+*Main> testBBAE (Minus (Num 5) (Num 4))
+True
+*Main> testBBAE (Minus (Num 5) (Num 5))
+True
+*Main> testBBAE (Minus (Num 5) (Num 6))
+*** Exception: ERROR: Resulting Difference must be Natural
+CallStack (from HasCallStack):
+  error, called at project2.hs:52:14 in main:Main
+
+*Main> testBBAE (Bind [] (Num 5) (Num 6))
+True
+*Main> testBBAE (Bind [] (Num 5) (Boolean True))
+True
+*Main> testBBAE (Bind [] (Boolean True) (Num 6))
+True
+*Main> testBBAE (Bind [] (Boolean True) (Boolean False))
+True
+
+*Main> testBBAE (Id [])
+True
 
 *Main> testBBAE (And (Boolean True) (Boolean False))
 False
@@ -131,6 +274,18 @@ Just TNum
 
 *Main> typeofM [] (Minus (Num 5) (Num 6))
 Just TNum
+
+*Main> typeofM [] (Bind [] (Num 5) (Num 6))
+Just TNum
+*Main> typeofM [] (Bind [] (Num 5) (Boolean True))
+Just TNum
+*Main> typeofM [] (Bind [] (Boolean True) (Num 6))
+Just TBool
+*Main> typeofM [] (Bind [] (Boolean True) (Boolean False))
+Just TBool
+
+*Main> typeofM [] (Id [])
+Nothing
 
 *Main> typeofM [] (And (Boolean True) (Boolean True))
 Just TBool
@@ -190,6 +345,18 @@ Just (Num 0)
 Just (Num *** Exception: ERROR: Resulting Difference must be Natural
 CallStack (from HasCallStack):
   error, called at project2.hs:53:14 in main:Main
+
+*Main> evalT (Bind [] (Num 5) (Num 6))
+Just (Num 6)
+*Main> evalT (Bind [] (Num 5) (Boolean True))
+Just (Boolean True)
+*Main> evalT (Bind [] (Boolean True) (Num 6))
+Just (Num 6)
+*Main> evalT (Bind [] (Boolean True) (Boolean False))
+Just (Boolean False)
+
+*Main> evalT (Id [])
+Just (Num 0)
 
 *Main> evalT (And (Boolean True) (Boolean True))
 Just (Boolean True)
