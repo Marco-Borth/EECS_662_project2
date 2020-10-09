@@ -197,6 +197,12 @@ False
 
 *Main> testBBAE (Plus (Num 4) (Num 5))
 True
+*Main> testBBAE (Plus (Num 5) (Boolean True))
+False
+*Main> testBBAE (Plus (Boolean False) (Num 6))
+False
+*Main> testBBAE (Plus (Boolean False) (Boolean True))
+False
 
 *Main> testBBAE (Minus (Num 5) (Num 4))
 True
@@ -206,6 +212,13 @@ True
 *** Exception: ERROR: Resulting Difference must be Natural
 CallStack (from HasCallStack):
   error, called at project2.hs:52:14 in main:Main
+*Main> testBBAE (Minus (Num 5) (Boolean True))
+False
+*Main> testBBAE (Minus (Boolean True) (Num 6))
+False
+*Main> testBBAE (Minus (Boolean True) (Boolean False))
+False
+
 
 *Main> testBBAE (Bind [] (Num 5) (Num 6))
 True
@@ -227,6 +240,15 @@ False
 False
 *Main> testBBAE (And (Boolean True) (Boolean True))
 True
+*Main> testBBAE (And (Boolean True) (Num 5))
+False
+*Main> testBBAE (And (Num 6) (Boolean True))
+False
+*Main> testBBAE (And (Num 6) (Num 5))
+False
+*Main> testBBAE (And (Num 6) (Num 6))
+False
+
 
 *Main> testBBAE (Leq (Num 5) (Num 6))
 True
@@ -234,10 +256,20 @@ True
 True
 *Main> testBBAE (Leq (Num 5) (Num 4))
 False
+*Main> testBBAE (Leq (Num 5) (Boolean True))
+False
+*Main> testBBAE (Leq (Boolean True) (Num 5))
+False
+*Main> testBBAE (Leq (Boolean True) (Boolean False))
+False
 
 *Main> testBBAE (IsZero (Num 0))
 True
 *Main> testBBAE (IsZero (Num 5))
+False
+*Main> testBBAE (IsZero (Boolean True))
+False
+*Main> testBBAE (IsZero (Boolean False))
 False
 
 *Main> testBBAE (If (Boolean True) (Boolean True) (Boolean True))
@@ -256,8 +288,12 @@ False
 True
 *Main> testBBAE (If (Boolean False) (Boolean False) (Boolean False))
 False
-
-
+*Main> testBBAE (If (Num 5) (Boolean True) (Boolean False))
+False
+*Main> testBBAE (If (Boolean True) (Num 5) (Boolean False))
+False
+*Main> testBBAE (If (Boolean False) (Boolean True) (Num 5))
+False
 
 -- typeofM Test Cases
 *Main> typeofM [] (Num 4)
@@ -265,15 +301,25 @@ Just TNum
 
 *Main> typeofM [] (Boolean True)
 Just TBool
-
 *Main> typeofM [] (Boolean False)
 Just TBool
 
 *Main> typeofM [] (Plus (Num 5) (Num 6))
 Just TNum
+*Main> typeofM [] (Plus (Boolean True) (Num 5))
+Nothing
+*Main> typeofM [] (Plus (Num 5) (Boolean True))
+Nothing
+*Main> typeofM [] (Plus (Boolean False) (Boolean True))
+Nothing
 
 *Main> typeofM [] (Minus (Num 5) (Num 6))
 Just TNum
+*Main> typeofM [] (Minus (Num 5) (Boolean True))
+Nothing
+*Main> typeofM [] (Minus (Boolean True) (Num 6))
+Nothing
+*Main> typeofM [] (Minus (Boolean True) (Boolean False))
 
 *Main> typeofM [] (Bind [] (Num 5) (Num 6))
 Just TNum
@@ -295,6 +341,12 @@ Just TBool
 Just TBool
 *Main> typeofM [] (And (Boolean False) (Boolean False))
 Just TBool
+*Main> typeofM [] (And (Boolean True) (Num 5))
+Nothing
+*Main> typeofM [] (And (Num 5) (Boolean False))
+Nothing
+*Main> typeofM [] (And (Num 5) (Num 6))
+Nothing
 
 *Main> typeofM [] (Leq (Num 5) (Num 6))
 Just TBool
@@ -302,11 +354,21 @@ Just TBool
 Just TBool
 *Main> typeofM [] (Leq (Num 5) (Num 4))
 Just TBool
+*Main> typeofM [] (Leq (Num 5) (Boolean True))
+Nothing
+*Main> typeofM [] (Leq (Boolean True) (Num 6))
+Nothing
+*Main> typeofM [] (Leq (Boolean True) (Boolean True))
+Nothing
 
 *Main> typeofM [] (IsZero (Num 0))
 Just TNum
 *Main> typeofM [] (IsZero (Num 5))
 Just TNum
+*Main> typeofM [] (IsZero (Boolean True))
+Nothing
+*Main> typeofM [] (IsZero (Boolean False))
+Nothing
 
 *Main> typeofM [] (If (Boolean True) (Boolean True) (Boolean True))
 Just TBool
@@ -324,6 +386,12 @@ Just TBool
 Just TBool
 *Main> typeofM [] (If (Boolean False) (Boolean False) (Boolean False))
 Just TBool
+*Main> typeofM [] (If (Boolean True) (Boolean True) (Num 0))
+Nothing
+*Main> typeofM [] (If (Boolean True) (Num 5) (Boolean True))
+Nothing
+*Main> typeofM [] (If (Num 3) (Boolean True) (Num 0))
+Nothing
 
 
 
@@ -336,6 +404,12 @@ Just (Boolean True)
 
 *Main> evalT (Plus (Num 5) (Num 6))
 Just (Num 11)
+*Main> evalT (Plus (Num 5) (Boolean True))
+Nothing
+*Main> evalT (Plus (Boolean True) (Num 6))
+Nothing
+*Main> evalT (Plus (Boolean True) (Boolean False))
+Nothing
 
 *Main> evalT (Minus (Num 5) (Num 4))
 Just (Num 1)
@@ -345,6 +419,11 @@ Just (Num 0)
 Just (Num *** Exception: ERROR: Resulting Difference must be Natural
 CallStack (from HasCallStack):
   error, called at project2.hs:53:14 in main:Main
+*Main> evalT (Minus (Num 5) (Boolean True))
+Nothing
+*Main> evalT (Minus (Boolean True) (Num 6))
+Nothing
+*Main> tevalT (Minus (Boolean True) (Boolean False))
 
 *Main> evalT (Bind [] (Num 5) (Num 6))
 Just (Num 6)
@@ -356,7 +435,7 @@ Just (Num 6)
 Just (Boolean False)
 
 *Main> evalT (Id [])
-Just (Num 0)
+Nothing
 
 *Main> evalT (And (Boolean True) (Boolean True))
 Just (Boolean True)
@@ -366,6 +445,12 @@ Just (Boolean False)
 Just (Boolean False)
 *Main> evalT (And (Boolean False) (Boolean True))
 Just (Boolean False)
+*Main> evalT (And (Boolean True) (Num 5))
+Nothing
+*Main> evalT (And (Num 5) (Boolean False))
+Nothing
+*Main> evalT (And (Num 5) (Num 6))
+Nothing
 
 *Main> evalT (Leq (Num 5) (Num 6))
 Just (Boolean True)
@@ -373,11 +458,21 @@ Just (Boolean True)
 Just (Boolean True)
 *Main> evalT (Leq (Num 5) (Num 4))
 Just (Boolean False)
+*Main> evalT (Leq (Num 5) (Boolean True))
+Nothing
+*Main> evalT (Leq (Boolean True) (Num 6))
+Nothing
+*Main> evalT (Leq (Boolean True) (Boolean True))
+Nothing
 
 *Main> evalT (IsZero (Num 0))
 Just (Boolean True)
 *Main> evalT (IsZero (Num 5))
 Just (Boolean False)
+*Main> evalT (IsZero (Boolean True))
+Nothing
+*Main> evalT (IsZero (Boolean False))
+Nothing
 
 *Main> evalT (If (Boolean False) (Boolean False) (Boolean False))
 Just (Boolean False)
@@ -397,3 +492,9 @@ Just (Boolean False)
 Just (Boolean True)
 *Main> evalT (If (Boolean False) (Boolean False) (Boolean False))
 Just (Boolean False)
+*Main> evalT (If (Boolean True) (Boolean True) (Num 0))
+Nothing
+*Main> evalT (If (Boolean True) (Num 5) (Boolean True))
+Nothing
+*Main> evalT (If (Num 3) (Boolean True) (Num 0))
+Nothing

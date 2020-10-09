@@ -91,6 +91,8 @@ evalS (Leq l r) = Just ( Boolean ( testBBAE ( Leq l r) ) )
 evalS (IsZero x) = Just ( Boolean ( testBBAE (IsZero x) ) )
 evalS (If c t e) = Just ( Boolean ( testBBAE ( If c t e ) ) )
 
+
+
 evalM :: Env -> BBAE -> (Maybe BBAE)
 evalM e (Num n) = Just (Num n)
 evalM e (Boolean b) = Just (Boolean b)
@@ -128,14 +130,18 @@ testBBAE (Boolean b) =
 
 testBBAE (Plus l r) =
   let x = [("l", l), ("r", r)]
-    in if evalS (Plus l r) == evalM x (Plus l r)
-      then True
+    in if typeofM [] (Plus l r) == Just TNum
+      then if evalS (Plus l r) == evalM x (Plus l r)
+        then True
+        else False
       else False
 
 testBBAE (Minus l r) =
   let x = [("l", l), ("r", r)]
-    in if evalS (Minus l r) == evalM x (Minus l r)
-      then True
+    in if typeofM [] (Plus l r) == Just TNum
+      then if evalS (Minus l r) == evalM x (Minus l r)
+        then True
+        else False
       else False
 
 testBBAE (Bind s a b) =
@@ -158,8 +164,10 @@ testBBAE (And l r) =
     else False
 
 testBBAE (Leq l r) =
-  if evalAE l <= evalAE r
-    then True
+  if typeofM [] (Leq l r) == Just TBool
+    then if evalAE l <= evalAE r
+      then True
+      else False
     else False
 
 testBBAE (IsZero x) | x == Num 0 = True
@@ -185,15 +193,15 @@ typeofM s (Plus l r) =
   if typeofM s l == Just TNum
     then if typeofM s r == Just TNum
       then Just TNum
-      else Just TBool
-    else Just TBool
+      else Nothing
+    else Nothing
 
 typeofM s (Minus l r) =
   if typeofM s l == Just TNum
     then if typeofM s r == Just TNum
       then Just TNum
-      else Just TBool
-    else Just TBool
+      else Nothing
+    else Nothing
 
 typeofM s (Bind x a b) =
   if typeofM s a == Just TNum
@@ -216,25 +224,27 @@ typeofM s (And l r) =
   if typeofM s l == Just TBool
     then if typeofM s r == Just TBool
       then Just TBool
-      else Just TNum
-    else Just TNum
+      else Nothing
+    else Nothing
 
 typeofM s (Leq l r) =
   if typeofM s l == Just TNum
     then if typeofM s r == Just TNum
       then Just TBool
-      else Just TNum
-    else Just TNum
+      else Nothing
+    else Nothing
 
 typeofM s (IsZero x) =
   if typeofM s x == Just TNum
-    then Just TNum
-    else Just TBool
+    then Just TBool
+    else Nothing
 
 typeofM s (If c t e) =
   if typeofM s c == Just TBool
-    then Just TBool
-    else Just TNum
+    then if typeofM s t == typeofM s e
+      then Just TBool
+      else Nothing
+    else Nothing
 
 
 
@@ -286,7 +296,7 @@ evalT (Leq l r) =
 
 evalT (IsZero x) =
   let s = [("x", TNum)]
-    in if typeofM s (IsZero x) == Just TNum
+    in if typeofM s (IsZero x) == Just TBool
       then evalS (IsZero x)
       else Nothing
 
